@@ -49,6 +49,12 @@ with open (filein, 'rb') as f:
 
 	#d = random.sample(b,c)
 
+	## MODE - DELETE IFRAMES
+	###########################
+
+	iframeregex = r'00dc\x10\x00\x00\x00.{8}'
+	#need to code the rest
+
 	## MODE - BLOOM
 	##################
 
@@ -72,7 +78,7 @@ with open (filein, 'rb') as f:
 
 	print "old index size : " + str(c + 1) + " frames"
 	hey = len(d)*16
-	print "new index size : " + str(hey) + " frames"
+	print "new index size : " + str((hey/16) + 1) + " frames"
 
 	#convert it to packed data
 	idxl = struct.pack('<I',hey)
@@ -86,5 +92,4 @@ with open (filein, 'rb') as f:
 	f = open(fileout, 'wb')
 	f.write(data)
 	f.close()
-
 
