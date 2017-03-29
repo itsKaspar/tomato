@@ -7,18 +7,18 @@
 It was designed to operate on video frame ordering, substraction and duplication.
 
 - `ikill` - Destroys all of the iframes
-- `iswap` - Advances all of the iframes on sequence furthers
+- `iswap` - Retreats all of the iframes one sequence earlier
 - `bloom` - Duplicates `c` times p-frame number `n`
 - `pulse` - Duplicates groups of `c` p-frames every `n` frames
 - `shuffle` - Every p-frame gets a `p` % chance to be shuffled
 
-> /!\ regardless of the option used the 1st iframe of the video will remain unaffected
+> regardless of the option use the 1st iframe of the video will remain unaffected
 
 ## Examples of usage
 
 ## Why did I develop tomato ?
 
-Most datamoshing utilities out there are pretty cool but restrain you into using specific codecs or just can't handle big files and big resolutions.
+Most datamoshing utilities out there are pretty cool but restrain you into using specific codecs or just can't handle big files and/or large resolutions.
 
 tomato is different in the sense that
 
