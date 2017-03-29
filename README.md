@@ -4,6 +4,15 @@
 - utilities inspired by [Way Spurr-Chen](https://github.com/wayspurrchen)'s [moshy](https://github.com/wayspurrchen/moshy). 
 - functionality based off of [Tomasz Sulej](https://github.com/tsulej)'s research on AVI file structure.
 
+It was designed to operate on video frame ordering, substraction and duplication. Which means you can reproduce any of the popular datamoshing effects and more. Different modes include :
+
+- i-frame deletion
+- i-frame swapping
+- p-frame duplication (and pulsing)
+- p-frame shuffling
+
+## Examples of usage
+
 ## Why did I develop tomato ?
 
 Most datamoshing utilities out there are pretty cool but restrain you into using specific codecs or just can't handle big files and big resolutions.
