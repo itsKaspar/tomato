@@ -4,7 +4,7 @@
 - utilities inspired by [Way Spurr-Chen](https://github.com/wayspurrchen)'s [moshy](https://github.com/wayspurrchen/moshy). 
 - functionality based off of [Tomasz Sulej](https://github.com/tsulej)'s research on AVI file structure.
 
-It was designed to operate on video frame ordering, substraction and duplication.
+It was designed to operate video frame ordering, substraction and duplication.
 
 - `ikill` - Destroys all of the iframes
 - `iswap` - Retreats all of the iframes one sequence earlier
@@ -15,6 +15,8 @@ It was designed to operate on video frame ordering, substraction and duplication
 > regardless of the option use the 1st iframe of the video will remain unaffected
 
 ## Examples of usage
+
+>python tomato.py -i video.avi -m ikill newvideo.avi
 
 ## Why did I develop tomato ?
 
