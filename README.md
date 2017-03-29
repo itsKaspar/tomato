@@ -12,7 +12,7 @@ It was designed to operate on video frame ordering, substraction and duplication
 - `pulse` - Duplicates groups of `c` p-frames every `n` frames
 - `shuffle` - Every p-frame gets a `p` % chance to be shuffled
 
-/!\ regardless of the option used the 1st iframe of the video will remain unaffected /!\
+> /!\ regardless of the option used the 1st iframe of the video will remain unaffected
 
 ## Examples of usage
 
