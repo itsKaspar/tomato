@@ -6,13 +6,13 @@
 
 It was designed to operate video frame ordering, substraction and duplication.
 
-- `ikill` - Destroys all of the iframes
-- `iswap` - Retreats all of the iframes one sequence earlier
-- `bloom` - Duplicates `c` times p-frame number `n`
-- `pulse` - Duplicates groups of `c` p-frames every `n` frames
-- `shuffle` - Every p-frame gets a `p` % chance to be shuffled
+- `ikill` - destroys all of the i-frames
+- `iswap` - retreats all of the i-frames one sequence earlier
+- `bloom` - duplicates `c` times p-frame number `n`
+- `pulse` - duplicates groups of `c` p-frames every `n` frames
+- `shuffle` - every p-frame gets a `p` % chance to be shuffled
 
-> regardless of the option used the 1st iframe of the video will remain unaffected
+>regardless of the option used the 1st iframe of the video will remain unaffected
 
 ## Examples of usage
 
