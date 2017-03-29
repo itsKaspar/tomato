@@ -4,12 +4,15 @@
 - utilities inspired by [Way Spurr-Chen](https://github.com/wayspurrchen)'s [moshy](https://github.com/wayspurrchen/moshy). 
 - functionality based off of [Tomasz Sulej](https://github.com/tsulej)'s research on AVI file structure.
 
-It was designed to operate on video frame ordering, substraction and duplication. Which means you can reproduce any of the popular datamoshing effects and more. Different modes include :
+It was designed to operate on video frame ordering, substraction and duplication.
 
-- i-frame deletion
-- i-frame swapping
-- p-frame duplication (and pulsing)
-- p-frame shuffling
+- `ikill` - Destroys all of the iframes
+- `iswap` - Advances all of the iframes on sequence furthers
+- `bloom` - Duplicates `c` times p-frame number `n`
+- `pulse` - Duplicates groups of `c` p-frames every `n` frames
+- `shuffle` - Every p-frame gets a `p` % chance to be shuffled
+
+/!\ regardless of the option used the 1st iframe of the video will remain unaffected /!\
 
 ## Examples of usage
 
