@@ -33,9 +33,13 @@ with open (filein, 'rb') as f:
 	## get the first iframe and store it
 	n = 16
 	iframe, a1 = a1[:n], a1[n:] 
-
+	
 	## put all frames in array
 	b = [a1[i:i+n] for i in range(0, len(a1), n)] 
+	
+	## take out all of the sound frames cuz who gives a fuck
+	sframeregex = re.compile(b'01wb\x10\x00\x00\x00.{8}')
+	b = [x for x in b if not re.match(sframeregex,x)]
 
 	## calculate number of frames
 	c = len(b)
@@ -59,7 +63,7 @@ with open (filein, 'rb') as f:
 	##################
 
 	## bloom options	
-	frame = 55
+	frame = 150
 	repeat = 500
 
 	## split list
@@ -70,7 +74,7 @@ with open (filein, 'rb') as f:
 	d = lista + ([b[frame]]*repeat) + listb
 
 	##just having fun by adding this at the end of the bloom
-	d = random.sample(d,c + repeat)
+	#d = random.sample(d,c + repeat)
 
 ########################
 ### FIX INDEX LENGTH ###
@@ -92,4 +96,3 @@ with open (filein, 'rb') as f:
 	f = open(fileout, 'wb')
 	f.write(data)
 	f.close()
-
