@@ -4,6 +4,7 @@ import argparse
 import re
 import random
 import struct
+from itertools import chain
 
 #################
 ### ARGUMENTS ###
@@ -63,16 +64,28 @@ with open (filein, 'rb') as f:
 	##################
 
 	## bloom options	
-	frame = 150
-	repeat = 500
-
+	#frame = 150
+	#repeat = 500
+	
 	## split list
-	lista = b[:frame]
-	listb = b[frame:]
+	#lista = b[:frame]
+	#listb = b[frame:]
 
 	## rejoin list with bloom
-	d = lista + ([b[frame]]*repeat) + listb
+	#d = lista + ([b[frame]]*repeat) + listb
 
+	### MODE - P PULSE
+	##################
+	
+	#min 2
+	pulselen = 20
+	pulseryt = 100
+	
+	d = [[x for j in range(pulselen)] if not i%pulseryt else x for i,x in enumerate(b)]
+	e = [item for sublist in d for item in sublist]
+	f = ''.join(e)
+	g = [f[i:i+n] for i in range(0, len(f), n)] 
+	
 	##just having fun by adding this at the end of the bloom
 	#d = random.sample(d,c + repeat)
 
@@ -81,7 +94,7 @@ with open (filein, 'rb') as f:
 ######################## 
 
 	print "old index size : " + str(c + 1) + " frames"
-	hey = len(d)*16
+	hey = len(g)*16
 	print "new index size : " + str((hey/16) + 1) + " frames"
 
 	## convert it to packed data
@@ -92,7 +105,7 @@ with open (filein, 'rb') as f:
 ###################
 
 	## rejoin the whole thing
-	data = ''.join(a[0] + "idx1" + idxl + iframe + ''.join(d)) 
+	data = ''.join(a[0] + "idx1" + idxl + iframe + ''.join(g)) 
 	f = open(fileout, 'wb')
 	f.write(data)
 	f.close()
