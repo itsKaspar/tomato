@@ -17,6 +17,7 @@ It was designed to operate video frame ordering, substraction and duplication.
 ## Examples of usage
 
 >python tomato.py -i input.avi -m ikill output.avi
+
 >python tomato.py -i input.avi -m pulse -c 5 -n 10 output.avi 
 
 ## Why did I develop tomato ?
