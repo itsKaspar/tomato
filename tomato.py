@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/bin/python2.7
 
 import argparse
 import re
