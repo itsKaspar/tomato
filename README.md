@@ -7,16 +7,17 @@
 It was designed to operate video frame ordering, substraction and duplication.
 
 - `ikill` - destroys all of the i-frames
-- `iswap` - retreats all of the i-frames one sequence earlier
+- `iswap` - retreats all of the i-frames one sequence earlier [under construction: whole mode not programmed]
 - `bloom` - duplicates `c` times p-frame number `n`
 - `pulse` - duplicates groups of `c` p-frames every `n` frames
-- `shuffle` - every p-frame gets a `p` % chance to be shuffled
+- `shuffle` - every p-frame gets a `p` % chance to be shuffled [under construction: -p not available]
 
 >regardless of the option used the 1st iframe of the video will remain unaffected
 
 ## Examples of usage
 
->python tomato.py -i video.avi -m ikill newvideo.avi
+>python tomato.py -i input.avi -m ikill output.avi
+>python tomato.py -i input.avi -m pulse -c 5 -n 10 output.avi 
 
 ## Why did I develop tomato ?
 
