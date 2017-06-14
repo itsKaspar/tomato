@@ -10,13 +10,16 @@ from itertools import chain
 ### ARGUMENTS ###
 #################
 
-parser = argparse.ArgumentParser(description="whatever baby")
+parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("file", help="input file")
 parser.add_argument("-o", "--output", help="output file")
+parser.add_argument('-m', "--mode", action='store', dest='modevalue',help='choose mode')
+#parser.add_argument("-m", "--mode", type=string, choices=["ikill","iswap","bloom","pulse","shuffle"],help="defines script mode", default=False)
 args = parser.parse_args()
 
 filein = args.file
 fileout = args.output
+mode = args.modevalue
 
 ####################
 ### OPENING FILE ###
@@ -52,39 +55,42 @@ with open (filein, 'rb') as f:
 	### MODE - SHUFFLE 
 	#####################
 
-	#d = random.sample(b,c)
+	if mode == "shuffle":
+		g = random.sample(b,c)
 
 	### MODE - DELETE IFRAMES
 	###########################
 
-	#iframeregex = re.compile(b'00dc\x10\x00\x00\x00.{8}')
-	#d = [x for x in b if not re.match(iframeregex,x)]
+	if mode == "ikill":
+		iframeregex = re.compile(b'00dc\x10\x00\x00\x00.{8}')
+		g = [x for x in b if not re.match(iframeregex,x)]
 
 	### MODE - BLOOM
 	##################
 
-	## bloom options	
-	#frame = 150
-	#repeat = 500
+	if mode == "bloom":
+		## bloom options	
+		frame = 150
+		repeat = 500
 	
-	## split list
-	#lista = b[:frame]
-	#listb = b[frame:]
+		## split list
+		lista = b[:frame]
+		listb = b[frame:]
 
-	## rejoin list with bloom
-	#d = lista + ([b[frame]]*repeat) + listb
+		## rejoin list with bloom
+		g = lista + ([b[frame]]*repeat) + listb
 
 	### MODE - P PULSE
 	##################
 	
-	#min 2
-	pulselen = 20
-	pulseryt = 100
+	if mode == "pulse":
+		pulselen = 20
+		pulseryt = 100
 	
-	d = [[x for j in range(pulselen)] if not i%pulseryt else x for i,x in enumerate(b)]
-	e = [item for sublist in d for item in sublist]
-	f = ''.join(e)
-	g = [f[i:i+n] for i in range(0, len(f), n)] 
+		d = [[x for j in range(pulselen)] if not i%pulseryt else x for i,x in enumerate(b)]
+		e = [item for sublist in d for item in sublist]
+		f = ''.join(e)
+		g = [f[i:i+n] for i in range(0, len(f), n)] 
 	
 	##just having fun by adding this at the end of the bloom
 	#d = random.sample(d,c + repeat)
