@@ -62,14 +62,14 @@ with open (filein, 'rb') as f:
 	#####################
 
 	if mode == "shuffle":
-		g = random.sample(b,c)
+		idx = random.sample(b,c)
 
 	### MODE - DELETE IFRAMES
 	###########################
 
 	if mode == "ikill":
 		iframeregex = re.compile(b'00dc\x10\x00\x00\x00.{8}')
-		g = [x for x in b if not re.match(iframeregex,x)]
+		idx = [x for x in b if not re.match(iframeregex,x)]
 
 	### MODE - BLOOM
 	##################
@@ -84,7 +84,7 @@ with open (filein, 'rb') as f:
 		listb = b[frame:]
 
 		## rejoin list with bloom
-		g = lista + ([b[frame]]*repeat) + listb
+		idx = lista + ([b[frame]]*repeat) + listb
 
 	### MODE - P PULSE
 	##################
@@ -93,10 +93,10 @@ with open (filein, 'rb') as f:
 		pulselen = int(countframes)
 		pulseryt = int(positframes)
 	
-		d = [[x for j in range(pulselen)] if not i%pulseryt else x for i,x in enumerate(b)]
-		e = [item for sublist in d for item in sublist]
-		f = ''.join(e)
-		g = [f[i:i+n] for i in range(0, len(f), n)] 
+		idx = [[x for j in range(pulselen)] if not i%pulseryt else x for i,x in enumerate(b)]
+		idx = [item for sublist in idx for item in sublist]
+		idx = ''.join(idx)
+		idx = [idx[i:i+n] for i in range(0, len(idx), n)] 
 	
 	##just having fun by adding this at the end of the bloom
 	#d = random.sample(d,c + repeat)
@@ -106,7 +106,7 @@ with open (filein, 'rb') as f:
 ######################## 
 
 	print "old index size : " + str(c + 1) + " frames"
-	hey = len(g)*16
+	hey = len(idx)*16
 	print "new index size : " + str((hey/16) + 1) + " frames"
 
 	## convert it to packed data
@@ -117,7 +117,7 @@ with open (filein, 'rb') as f:
 ###################
 
 	## rejoin the whole thing
-	data = ''.join(a[0] + "idx1" + idxl + iframe + ''.join(g)) 
+	data = ''.join(a[0] + "idx1" + idxl + iframe + ''.join(idx)) 
 	f = open(fileout, 'wb')
 	f.write(data)
 	f.close()
