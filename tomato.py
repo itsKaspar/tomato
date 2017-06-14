@@ -14,12 +14,18 @@ parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("file", help="input file")
 parser.add_argument("-o", "--output", help="output file")
 parser.add_argument('-m', "--mode", action='store', dest='modevalue',help='choose mode')
-#parser.add_argument("-m", "--mode", type=string, choices=["ikill","iswap","bloom","pulse","shuffle"],help="defines script mode", default=False)
+parser.add_argument('-c', action='store', dest='countframes',help='var1', default=1)
+parser.add_argument('-n', action='store', dest='positframes',help='var2', default=1)
+parser.add_argument('-s', action='store', dest='simple_value',
+                    help='Store a simple value')
+
 args = parser.parse_args()
 
 filein = args.file
 fileout = args.output
 mode = args.modevalue
+countframes = args.countframes
+positframes = args.positframes
 
 ####################
 ### OPENING FILE ###
@@ -69,9 +75,9 @@ with open (filein, 'rb') as f:
 	##################
 
 	if mode == "bloom":
-		## bloom options	
-		frame = 150
-		repeat = 500
+		## bloom options
+		repeat = int(countframes)	
+		frame = int(positframes)
 	
 		## split list
 		lista = b[:frame]
@@ -84,8 +90,8 @@ with open (filein, 'rb') as f:
 	##################
 	
 	if mode == "pulse":
-		pulselen = 20
-		pulseryt = 100
+		pulselen = int(countframes)
+		pulseryt = int(positframes)
 	
 		d = [[x for j in range(pulselen)] if not i%pulseryt else x for i,x in enumerate(b)]
 		e = [item for sublist in d for item in sublist]
