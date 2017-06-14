@@ -11,18 +11,16 @@ from itertools import chain
 #################
 
 parser = argparse.ArgumentParser(add_help=True)
-parser.add_argument("file", help="input file")
-parser.add_argument("-o", "--output", help="output file")
+parser.add_argument("-i", "--input", help="input file")
 parser.add_argument('-m', "--mode", action='store', dest='modevalue',help='choose mode')
 parser.add_argument('-c', action='store', dest='countframes',help='var1', default=1)
 parser.add_argument('-n', action='store', dest='positframes',help='var2', default=1)
-parser.add_argument('-s', action='store', dest='simple_value',
-                    help='Store a simple value')
+parser.add_argument("file", help="input file")
 
 args = parser.parse_args()
 
-filein = args.file
-fileout = args.output
+fileout = args.file
+filein = args.input
 mode = args.modevalue
 countframes = args.countframes
 positframes = args.positframes
@@ -106,11 +104,11 @@ with open (filein, 'rb') as f:
 ######################## 
 
 	print "old index size : " + str(c + 1) + " frames"
-	hey = len(idx)*16
-	print "new index size : " + str((hey/16) + 1) + " frames"
+	idxl = len(idx)*16
+	print "new index size : " + str((idxl/16) + 1) + " frames"
 
 	## convert it to packed data
-	idxl = struct.pack('<I',hey)
+	idxl = struct.pack('<I',idxl)
 
 ###################
 ### SAVING FILE ###
