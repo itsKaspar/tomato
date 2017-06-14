@@ -18,7 +18,17 @@ It was designed to operate video frame ordering, substraction and duplication.
 
 >python tomato.py -i input.avi -m ikill output.avi
 
+>python tomato.py -i input.avi -m bloom -c 50 -n 100 output.avi 
+
+Takes the 100th video frame and duplicate 50 times
+
 >python tomato.py -i input.avi -m pulse -c 5 -n 10 output.avi 
+
+Duplicates every 10th frame 5 times
+
+>python tomato.py -i input.avi -m shuffle output.avi
+
+Shuffles all of the frames in the video
 
 ## Why did I develop tomato ?
 
@@ -39,3 +49,11 @@ However there is still room for improvement
 
 Basically when you input an AVI file, it ignores the content and skips to the frame index to operate on it.
 Video players reading the resulting file through the index will interpret and glitch the video on the fly.
+
+For practicles purposes sounds frames are all deleted
+
+## How should you use it
+
+No dependencies are needed to run tomato but I recommend preparing your AVI files with ffmpeg and the codec library of your choice.
+To read your glitched files I recommend VLC or Xine if you're under Linux. Both are great for visualazing content (especially xine for the shuffle mode) but keep in mind you should always be experimenting and using different visualizers or tools to bake your files.
+If you have any questions or ideas feel free to send me an email at kaspar.ravel@gmail.com
