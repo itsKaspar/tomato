@@ -29,11 +29,28 @@ positframes = args.positframes
 ### OPENING FILE ###
 ####################
 
-#open .avi file as binary
-with open (filein, 'rb') as f: 
-	## split the content at "idx1"
-	a = f.read().split('idx1', 1)
-	a1 = a[1]
+
+#open .avi file as binary stream first part in f2 and rest in idx
+
+with open(filein,'rb') as f1:
+	with open(fileout,'wb') as f2:
+		while True:
+			buffer = f1.read(1024)
+			if buffer: 
+				if buffer.find('idx1') == -1 : 
+					for byte in buffer :
+						f2.write(byte)
+				elif buffer.find('idx1') != -1 :
+					a = buffer.split('idx1', 1)
+					f2.write(a[0])
+					idx = a[1] + f1.read()
+					break
+			else :
+				print('file has no index')
+				break
+	f2.close()
+
+	a1 = idx
 
 	## get the length of the index and store it
 	a1, idxl = a1[4:], a1[:4]
@@ -43,11 +60,12 @@ with open (filein, 'rb') as f:
 	iframe, a1 = a1[:n], a1[n:] 
 	
 	## put all frames in array
-	b = [a1[i:i+n] for i in range(0, len(a1), n)] 
+	sframeregex = re.compile('.*wb.*')
+	b = [a1[i:i+n] for i in range(0, len(a1), n) if not re.match(sframeregex,a1[i:i+n])] 
 	
 	## take out all of the sound frames cuz who gives a fuck
-	sframeregex = re.compile(b'01wb\x10\x00\x00\x00.{8}')
-	b = [x for x in b if not re.match(sframeregex,x)]
+	#sframeregex = re.compile('.*wb.*')
+	#b = [x for x in b if not re.match(sframeregex,x)]
 
 	## calculate number of frames
 	c = len(b)
@@ -105,6 +123,7 @@ with open (filein, 'rb') as f:
 
 	print "old index size : " + str(c + 1) + " frames"
 	idxl = len(idx)*16
+	print(idxl)
 	print "new index size : " + str((idxl/16) + 1) + " frames"
 
 	## convert it to packed data
@@ -115,7 +134,10 @@ with open (filein, 'rb') as f:
 ###################
 
 	## rejoin the whole thing
-	data = ''.join(a[0] + "idx1" + idxl + iframe + ''.join(idx)) 
-	f = open(fileout, 'wb')
-	f.write(data)
-	f.close()
+	data = ''.join('idx1' + idxl + iframe + ''.join(idx)) 
+	f2 = open(fileout, 'ab')
+	f2.write(data)
+	f2.close()
+	
+	f3 = open('index.avi', 'wb')
+	f3.write(''.join(idx))
