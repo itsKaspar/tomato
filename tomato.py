@@ -84,7 +84,7 @@ with open(filein,'rb') as f1:
 	###########################
 
 	if mode == "ikill":
-		iframeregex = re.compile(b'00dc\x10\x00\x00\x00.{8}')
+		iframeregex = re.compile(b'.*dc\x10.*')
 		idx = [x for x in b if not re.match(iframeregex,x)]
 
 	### MODE - BLOOM
@@ -139,5 +139,5 @@ with open(filein,'rb') as f1:
 	f2.write(data)
 	f2.close()
 	
-	f3 = open('index.avi', 'wb')
-	f3.write(''.join(idx))
+#	f3 = open('index.avi', 'wb')
+#	f3.write(''.join(idx))
