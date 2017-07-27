@@ -113,6 +113,10 @@ with open(filein,'rb') as f1:
 		idx = [item for sublist in idx for item in sublist]
 		idx = ''.join(idx)
 		idx = [idx[i:i+n] for i in range(0, len(idx), n)] 
+		
+		
+	### MODE - REVERSE
+	##################
 	
 	##just having fun by adding this at the end of the bloom
 	#d = random.sample(d,c + repeat)
