@@ -237,14 +237,9 @@ positframes = args.positframes
 #open .avi file as binary stream first part in wr and rest in idx
 
 with open(filein,'rb') as rd:
-
 	print "Opening File\n"
-
-
 	with open(fileout,'wb') as wr:
-	
 		print "Streaming File\n"
-		
 		while True:
 			buffer = rd.read(1024)
 			if buffer: 
@@ -260,9 +255,8 @@ with open(filein,'rb') as rd:
 				print('file has no index')
 				break
 	wr.close()
-
+	
 	print "Getting list of Tomatoes\n"
-
 	## get the length of the index and store it
 	idx, index_length = idx[4:], idx[:4]
 
