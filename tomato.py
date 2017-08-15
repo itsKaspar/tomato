@@ -6,6 +6,23 @@ import random
 import struct
 from itertools import chain
 
+print " _                        _        "
+print "| |                      | |       "
+print "| |_ ___  _ __ ___   __ _| |_ ___  "
+print "| __/ _ \| '_ ` _ \ / _` | __/ _ \ "
+print "| || (_) | | | | | | (_| | || (_) |"
+print " \__\___/|_| |_| |_|\__,_|\__\___/ "
+print "tomato.py v1.1 last update 15.07.2017"
+print "\\\\ Audio Video Interleave index breaker"
+print " "
+print "\"je demande a ce qu'on tienne pour un cretin"
+print "celui qui se refuserait encore, par exemple,"
+print "a voir un cheval galoper sur une tomate.\""
+print " - Andre Breton"
+print " "
+print "___________________________________"
+print " "
+
 #################
 ### ARGUMENTS ###
 #################
@@ -29,119 +46,148 @@ positframes = args.positframes
 ### OPENING FILE ###
 ####################
 
+#open .avi file as binary stream first part in wr and rest in idx
 
-#open .avi file as binary stream first part in f2 and rest in idx
+with open(filein,'rb') as rd:
 
-with open(filein,'rb') as f1:
-	with open(fileout,'wb') as f2:
+	print "Opening File\n"
+
+
+	with open(fileout,'wb') as wr:
+	
+		print "Streaming File\n"
+		
 		while True:
-			buffer = f1.read(1024)
+			buffer = rd.read(1024)
 			if buffer: 
-				if buffer.find('idx1') == -1 : 
+				if buffer.find(b'idx1') == -1 : 
 					for byte in buffer :
-						f2.write(byte)
-				elif buffer.find('idx1') != -1 :
-					a = buffer.split('idx1', 1)
-					f2.write(a[0])
-					idx = a[1] + f1.read()
+						wr.write(byte)
+				else:
+					splitidx = buffer.split(b'idx1', 1)
+					wr.write(splitidx[0])
+					idx = splitidx[1] + rd.read()
 					break
-			else :
+			else:
 				print('file has no index')
 				break
-	f2.close()
+	wr.close()
 
-	a1 = idx
+	print "Getting list of Tomatoes\n"
 
 	## get the length of the index and store it
-	a1, idxl = a1[4:], a1[:4]
+	idx, index_length = idx[4:], idx[:4]
 
 	## get the first iframe and store it
 	n = 16
-	iframe, a1 = a1[:n], a1[n:] 
-	
-	## put all frames in array
-	sframeregex = re.compile('.*wb.*')
-	b = [a1[i:i+n] for i in range(0, len(a1), n) if not re.match(sframeregex,a1[i:i+n])] 
-	
-	## take out all of the sound frames cuz who gives a fuck
-	#sframeregex = re.compile('.*wb.*')
-	#b = [x for x in b if not re.match(sframeregex,x)]
+	first_frame, idx = idx[:n], idx[n:]
+	check = bytearray()
+	check.extend(first_frame)
+	print([i for i in check])
+	## put all frames in array ignoring sound frames
+	regex = re.compile(b'.*wb.*')
+	idx = [idx[i:i+n] for i in range(0, len(idx), n) if not re.match(regex,idx[i:i+n])] 	
 
 	## calculate number of frames
-	c = len(b)
+	number_of_frames = len(idx)
 
+	print "Ready for the serious shitz\n"
+	
 #########################
 ### OPERATIONS TO IDX ###
 #########################
 
-	### MODE - SHUFFLE 
-	#####################
-
 	if mode == "shuffle":
-		idx = random.sample(b,c)
-
-	### MODE - DELETE IFRAMES
-	###########################
+		print "### MODE - RANDOM"
+		print "##################\n"
+		idx = random.sample(idx,number_of_frames)
 
 	if mode == "ikill":
-		iframeregex = re.compile(b'.*dc\x10.*')
-		idx = [x for x in b if not re.match(iframeregex,x)]
+		print "### MODE - IKILL"
+		print "##################\n"
+		regex = re.compile(b'.*dc\x10.*')
+		idx = [x for x in idx if not re.match(regex,x)]
 
-	### MODE - BLOOM
-	##################
+	if mode == "irep":
+		print "### MODE - IREP"
+		print "##################\n"
+		
+		idx = []
+		last = None
+		regex = re.compile(b'.*dc\x10.*')
+		for x in idx:
+			if not last: last = x
+			if not re.match(regex,x):
+				idx.append(x)
+				last = x		
+			else:
+				idx.append(last)
 
 	if mode == "bloom":
+		print "### MODE - BLOOM"
+		print "##################\n"
 		## bloom options
 		repeat = int(countframes)	
 		frame = int(positframes)
 	
 		## split list
-		lista = b[:frame]
-		listb = b[frame:]
+		lista = idx[:frame]
+		listb = idx[frame:]
 
 		## rejoin list with bloom
-		idx = lista + ([b[frame]]*repeat) + listb
-
-	### MODE - P PULSE
-	##################
+		idx = lista + ([idx[frame]]*repeat) + listb
 	
 	if mode == "pulse":
+		print "### MODE - PULSE"
+		print "##################\n"
+		
 		pulselen = int(countframes)
 		pulseryt = int(positframes)
 	
-		idx = [[x for j in range(pulselen)] if not i%pulseryt else x for i,x in enumerate(b)]
+		idx = [[x for j in range(pulselen)] if not i%pulseryt else x for i,x in enumerate(idx)]
 		idx = [item for sublist in idx for item in sublist]
 		idx = ''.join(idx)
 		idx = [idx[i:i+n] for i in range(0, len(idx), n)] 
-		
-		
-	### MODE - REVERSE
-	##################
 	
-	##just having fun by adding this at the end of the bloom
-	#d = random.sample(d,c + repeat)
+	if mode == "reverse":	
+		print "### MODE - REVERSE"
+		print "##################\n"
+		
+		idx = idx[::-1]
+	
+	if mode == "invert":	
+		print "### MODE - INVERT"
+		print "##################\n"
+		
+		idx = sum(zip(idx[1::2], idx[::2]), ())
+	
+	### MODE - SHIT
+	##################
 
 ########################
 ### FIX INDEX LENGTH ###
 ######################## 
 
-	print "old index size : " + str(c + 1) + " frames"
-	idxl = len(idx)*16
-	print(idxl)
-	print "new index size : " + str((idxl/16) + 1) + " frames"
+	print "old index size : " + str(number_of_frames + 1) + " frames"
+	index_length = len(idx)*16
+	print "new index size : " + str((index_length/16) + 1) + " frames\n"
 
 	## convert it to packed data
-	idxl = struct.pack('<I',idxl)
+	index_length = struct.pack('<I',index_length)
 
 ###################
 ### SAVING FILE ###
 ###################
 
+	print "Saving new file"
+
 	## rejoin the whole thing
-	data = ''.join('idx1' + idxl + iframe + ''.join(idx)) 
-	f2 = open(fileout, 'ab')
-	f2.write(data)
-	f2.close()
+	data = b''.join(b'idx1' + index_length + first_frame+ b''.join(idx)) 
+	wr = open(fileout, 'ab')
+	wr.write(data)
+	wr.close()
+	
+	print "Your file has been saved <3 remember to bake it !"
 	
 #	f3 = open('index.avi', 'wb')
 #	f3.write(''.join(idx))
