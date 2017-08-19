@@ -164,7 +164,7 @@ with open(filein,'rb') as rd:
 ######################## 
 
 	print "old index size : " + str(number_of_frames + 1) + " frames"
-	index_length = len(idx)*16
+	index_length = len(idx)*16 + 16
 	print "new index size : " + str((index_length/16) + 1) + " frames\n"
 
 	## convert it to packed data
@@ -176,7 +176,7 @@ with open(filein,'rb') as rd:
 
 	print "Saving new file\n"
 	## rejoin the whole thing
-	data = b''.join(b'idx1' + index_length + first_frame+ b''.join(idx)) 
+	data = b''.join(b'idx1' + index_length + first_frame + b''.join(idx)) 
 	wr = open(fileout, 'ab')
 	wr.write(data)
 	wr.close()
