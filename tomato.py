@@ -78,13 +78,13 @@ with open(filein,'rb') as rd:
 	print([i for i in check])
 	## put all frames in array ignoring sound frames
 	regex = re.compile(b'.*wb.*')
-	idx = [idx[i:i+n] for i in range(0, len(idx), n) if not re.match(regex,idx[i:i+n])] 	
+	idx = [idx[i:i+n] for i in range(0, len(idx), n) if not re.match(regex,idx[i:i+n])]
 
 	## calculate number of frames
 	number_of_frames = len(idx)
 
 	print "Ready for the serious shitz\n"
-	
+
 #########################
 ### OPERATIONS TO IDX ###
 #########################
@@ -92,9 +92,9 @@ with open(filein,'rb') as rd:
 	if mode == "void":
 		print "### MODE - VOID"
 		print "##################\n"
-		
+
 		print "not doing shit"
-		
+
 	if mode == "shuffle":
 		print "### MODE - RANDOM"
 		print "##################\n"
@@ -109,59 +109,60 @@ with open(filein,'rb') as rd:
 	if mode == "irep":
 		print "### MODE - IREP"
 		print "##################\n"
-		
-		idx = []
+
+		nidx = []
 		last = None
 		regex = re.compile(b'.*dc\x10.*')
 		for x in idx:
 			if not last: last = x
 			if not re.match(regex,x):
-				idx.append(x)
-				last = x		
+				nidx.append(x)
+				last = x
 			else:
-				idx.append(last)
+				nidx.append(last)
+		idx = nidx
 
 	if mode == "bloom":
 		print "### MODE - BLOOM"
 		print "##################\n"
 		## bloom options
-		repeat = int(countframes)	
+		repeat = int(countframes)
 		frame = int(positframes)
-	
+
 		## split list
 		lista = idx[:frame]
 		listb = idx[frame:]
 
 		## rejoin list with bloom
 		idx = lista + ([idx[frame]]*repeat) + listb
-	
+
 	if mode == "pulse":
 		print "### MODE - PULSE"
 		print "##################\n"
-		
+
 		pulselen = int(countframes)
 		pulseryt = int(positframes)
-	
+
 		idx = [[x for j in range(pulselen)] if not i%pulseryt else x for i,x in enumerate(idx)]
 		idx = [item for sublist in idx for item in sublist]
 		idx = ''.join(idx)
-		idx = [idx[i:i+n] for i in range(0, len(idx), n)] 
-	
-	if mode == "reverse":	
+		idx = [idx[i:i+n] for i in range(0, len(idx), n)]
+
+	if mode == "reverse":
 		print "### MODE - REVERSE"
 		print "##################\n"
-		
+
 		idx = idx[::-1]
-	
-	if mode == "invert":	
+
+	if mode == "invert":
 		print "### MODE - INVERT"
 		print "##################\n"
-		
+
 		idx = sum(zip(idx[1::2], idx[::2]), ())
 
 ########################
 ### FIX INDEX LENGTH ###
-######################## 
+########################
 
 	print "old index size : " + str(number_of_frames + 1) + " frames"
 	index_length = len(idx)*16 + 16
@@ -176,11 +177,11 @@ with open(filein,'rb') as rd:
 
 	print "Saving new file\n"
 	## rejoin the whole thing
-	data = b''.join(b'idx1' + index_length + first_frame + b''.join(idx)) 
+	data = b''.join(b'idx1' + index_length + first_frame + b''.join(idx))
 	wr = open(fileout, 'ab')
 	wr.write(data)
 	wr.close()
-	
+
 	print "Your file has been saved <3 remember to bake it !\n"
 
 #############
@@ -188,6 +189,6 @@ with open(filein,'rb') as rd:
 #############
 
 ## creates a seperate file with the index
-	
+
 #	f3 = open('index.avi', 'wb')
 #	f3.write(''.join(idx))
