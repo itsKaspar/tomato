@@ -12,7 +12,7 @@ print "| |_ ___  _ __ ___   __ _| |_ ___  "
 print "| __/ _ \| '_ ` _ \ / _` | __/ _ \ "
 print "| || (_) | | | | | | (_| | || (_) |"
 print " \__\___/|_| |_| |_|\__,_|\__\___/ "
-print "tomato.py v1.1 last update 15.07.2017"
+print "tomato.py v1.1 last update 19.07.2017"
 print "\\\\ Audio Video Interleave index breaker"
 print " "
 print "\"je demande a ce qu'on tienne pour un cretin"
@@ -89,6 +89,12 @@ with open(filein,'rb') as rd:
 ### OPERATIONS TO IDX ###
 #########################
 
+	if mode == "void":
+		print "### MODE - VOID"
+		print "##################\n"
+		
+		print "not doing shit"
+		
 	if mode == "shuffle":
 		print "### MODE - RANDOM"
 		print "##################\n"
