@@ -165,7 +165,7 @@ with open(filein,'rb') as rd:
 
 	print "old index size : " + str(number_of_frames + 1) + " frames"
 	index_length = len(idx)*16 + 16
-	print "new index size : " + str((index_length/16) + 1) + " frames\n"
+	print "new index size : " + str((index_length/16)) + " frames\n"
 
 	## convert it to packed data
 	index_length = struct.pack('<I',index_length)
