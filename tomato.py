@@ -1,9 +1,6 @@
-#!/bin/python2.7
+#!/usr/bin/python2.7
 
-import argparse
-import re
-import random
-import struct
+import argparse, os, re, random, struct
 from itertools import chain
 
 print " _                        _        "
@@ -29,9 +26,10 @@ print " "
 
 parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("-i", "--input", help="input file")
-parser.add_argument('-m', "--mode", action='store', dest='modevalue',help='choose mode')
+parser.add_argument('-m', "--mode", action='store', dest='modevalue',help='choose mode, one of:\nshuffle irep ikill bloom pulse reverse invert')
 parser.add_argument('-c', action='store', dest='countframes',help='var1', default=1)
 parser.add_argument('-n', action='store', dest='positframes',help='var2', default=1)
+parser.add_argument('-l','--lim', help='fraction of file to search before giving up, default: 4', default=4)
 parser.add_argument("file", help="input file")
 
 args = parser.parse_args()
@@ -48,23 +46,28 @@ positframes = args.positframes
 
 with open(filein,'rb') as rd:
 	print "Opening File\n"
+	filesize = os.path.getsize(filein)
+	chunk = 1024
+	lim = args.lim
+	idx = ''
 	with open(fileout,'wb') as wr:
 		print "Streaming File\n"
-		while True:
-			buffer = rd.read(1024)
-			if buffer: 
-				if buffer.find(b'idx1') == -1 : 
-					for byte in buffer :
-						wr.write(byte)
-				else:
-					splitidx = buffer.split(b'idx1', 1)
-					wr.write(splitidx[0])
-					idx = splitidx[1] + rd.read()
-					break
-			else:
-				print('file has no index')
+		for pos in xrange(filesize-chunk, filesize-filesize/lim, -chunk): # move backwards through data
+			rd.seek(pos)
+			buffer = rd.read(chunk)
+
+			if buffer.find(b'idx1') >= 0:
+				split = buffer.split(b'idx1', 1)
+				rd.seek(0)
+				wr.write(rd.read(pos)) # start the read at the beginning again,
+				wr.write(split[0])  # spit out data up to this point plus the stuff before idx
+				idx = split[1] + rd.read()
 				break
-	wr.close()
+
+		if len(idx) == 0:
+			print('Could not locate index!\n')
+			raise SystemExit # quit
+
 
 	print "Getting list of Tomatoes\n"
 	## get the length of the index and store it
@@ -75,7 +78,7 @@ with open(filein,'rb') as rd:
 	first_frame, idx = idx[:n], idx[n:]
 	check = bytearray()
 	check.extend(first_frame)
-	print([i for i in check])
+	#print([i for i in check])
 	## put all frames in array ignoring sound frames
 	regex = re.compile(b'.*wb.*')
 	idx = [idx[i:i+n] for i in range(0, len(idx), n) if not re.match(regex,idx[i:i+n])]
