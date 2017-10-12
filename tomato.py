@@ -148,7 +148,7 @@ with open(filein,'rb') as rd:
 		pulseryt = int(positframes)
 
 		idx = [[x for j in range(pulselen)] if not i%pulseryt else x for i,x in enumerate(idx)]
-		idx = [item for sublist in idx for item in sublist]
+		idx = [item for sublist in idx for item in sublist] #flattens the list
 		idx = ''.join(idx)
 		idx = [idx[i:i+n] for i in range(0, len(idx), n)]
 
