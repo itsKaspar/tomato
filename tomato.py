@@ -62,7 +62,7 @@ with open(filein,'rb') as rd:
 				wr.write(rd.read(pos)) # start the read at the beginning again,
 				wr.write(split[0])  # spit out data up to this point plus the stuff before idx
                                 rd.seek(len(split[0])+8,1)
-				idx = split[1] + rd.read()
+				idx = rd.read()
 				break
 
 		if len(idx) == 0:
