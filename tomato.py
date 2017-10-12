@@ -116,7 +116,7 @@ with open(filein,'rb') as rd:
 
                 l = len(idx)-1
                 amount = int(positframes)
-                idx = [idx[constrain(x+int(random.gauss(0,amount)),0,l)] for x in range(0,len(idx))]
+                idx = [idx[constrain(x+int(random.gauss(0,amount)),1,l)] for x in range(0,len(idx))]
                 
 	if mode == "ikill":
 		print "### MODE - IKILL"
