@@ -61,6 +61,8 @@ with open(filein,'rb') as rd:
 				rd.seek(0)
 				wr.write(rd.read(pos)) # start the read at the beginning again,
 				wr.write(split[0])  # spit out data up to this point plus the stuff before idx
+                                print(len(split[0]))
+                                rd.seek(len(split[0])+8,1)
 				idx = split[1] + rd.read()
 				break
 
@@ -77,7 +79,7 @@ with open(filein,'rb') as rd:
 	n = 16
 	first_frame, idx = idx[:n], idx[n:]
 	check = bytearray()
-	check.extend(first_frame)
+ 	check.extend(first_frame)
 	#print([i for i in check])
 	## put all frames in array ignoring sound frames
 	regex = re.compile(b'.*wb.*')
