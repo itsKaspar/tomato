@@ -9,7 +9,7 @@ print "| |_ ___  _ __ ___   __ _| |_ ___  "
 print "| __/ _ \| '_ ` _ \ / _` | __/ _ \ "
 print "| || (_) | | | | | | (_| | || (_) |"
 print " \__\___/|_| |_| |_|\__,_|\__\___/ "
-print "tomato.py v1.2 last update 05.10.2017"
+print "tomato.py v1.3 last update 12.10.2017"
 print "\\\\ Audio Video Interleave index breaker"
 print " "
 print "\"je demande a ce qu'on tienne pour un cretin"
@@ -103,7 +103,6 @@ with open(filein,'rb') as rd:
 	if mode == "void":
 		print "### MODE - VOID"
 		print "##################\n"
-
 		print "not doing shit"
 
 	if mode == "shuffle":
@@ -163,7 +162,7 @@ with open(filein,'rb') as rd:
 		pulseryt = int(positframes)
 
 		idx = [[x for j in range(pulselen)] if not i%pulseryt else x for i,x in enumerate(idx)]
-		idx = [item for sublist in idx for item in sublist]
+		idx = [item for sublist in idx for item in sublist] #flattens the list
 		idx = ''.join(idx)
 		idx = [idx[i:i+n] for i in range(0, len(idx), n)]
 
@@ -211,7 +210,9 @@ with open(filein,'rb') as rd:
 	wr.write(data)
 	wr.close()
 
-	print "Your file has been saved <3 remember to bake it !\n"
+	print "Your file has been saved <3\n"
+	print "Prefer VLC to view your unstable video file"
+	print "But don't forget to bake it ! :)"
 
 #############
 ### DEBUG ###

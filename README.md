@@ -20,13 +20,15 @@ It was designed to operate video frame ordering, substraction and duplication.
 
 >python tomato.py -i input.avi -m ikill output.avi
 
+Takes out all iframes except for the first one
+
 >python tomato.py -i input.avi -m bloom -c 50 -n 100 output.avi 
 
-Takes the 100th video frame and duplicate 50 times
+Duplicate 50 times the 100th frame
 
 >python tomato.py -i input.avi -m pulse -c 5 -n 10 output.avi 
 
-Duplicates every 10th frame 5 times
+Duplicates 5 times a frame every 10 frame
 
 >python tomato.py -i input.avi -m shuffle output.avi
 
@@ -36,7 +38,7 @@ Shuffles all of the frames in the video
 
 Copy 4 frames taken starting from every 2nd frame. [1 2 3 4 3 4 5 6 5 6 7 8 7 8...]
 
-## Why did I develop tomato ?
+## Why did we develop tomato ?
 
 Most datamoshing utilities out there are pretty cool but restrain you into using specific codecs or just can't handle big files and/or large resolutions.
 
