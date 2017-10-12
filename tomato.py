@@ -40,6 +40,13 @@ mode = args.modevalue
 countframes = args.countframes
 positframes = args.positframes
 
+#######################
+### HELPER FUNCTION ###
+#######################
+
+def constrain(val, min_val, max_val):
+    return min(max_val, max(min_val, val))
+
 ####################
 ### OPENING FILE ###
 ####################
@@ -104,6 +111,14 @@ with open(filein,'rb') as rd:
 		print "##################\n"
 		idx = random.sample(idx,number_of_frames)
 
+        if mode == "jiggle":
+                print "### MODE - JIGGLE"
+		print "##################\n"
+
+                l = len(idx)-1
+                amount = int(positframes)
+                idx = [idx[constrain(x+int(random.gauss(0,amount)),0,l)] for x in range(0,len(idx))]
+                
 	if mode == "ikill":
 		print "### MODE - IKILL"
 		print "##################\n"
@@ -152,6 +167,16 @@ with open(filein,'rb') as rd:
 		idx = ''.join(idx)
 		idx = [idx[i:i+n] for i in range(0, len(idx), n)]
 
+        if mode == "overlapped":
+                print "### MODE - OVERLAPPED"
+                print "##################\n"
+
+		pulselen = int(countframes)
+		pulseryt = int(positframes)
+
+                idx = [idx[i:i+pulselen] for i in range(0,len(idx),pulseryt)]
+                idx = [item for sublist in idx for item in sublist]
+                
 	if mode == "reverse":
 		print "### MODE - REVERSE"
 		print "##################\n"

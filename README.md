@@ -11,6 +11,8 @@ It was designed to operate video frame ordering, substraction and duplication.
 - `bloom` - duplicates `c` times p-frame number `n`
 - `pulse` - duplicates groups of `c` p-frames every `n` frames
 - `shuffle` - every p-frame gets a `p` % chance to be shuffled [under construction: -p not available]
+- `overlapped` - copy group of `c` frames taken from every `n`th position
+- `jiggle` - take frame from around current position. `n` parameter is spread size
 
 >regardless of the option used the 1st iframe of the video will remain unaffected
 
@@ -29,6 +31,10 @@ Duplicates every 10th frame 5 times
 >python tomato.py -i input.avi -m shuffle output.avi
 
 Shuffles all of the frames in the video
+
+>python tomato.py -i input.avi -m overlapped -c 4 -n 2 output.avi
+
+Copy 4 frames taken starting from every 2nd frame. [1 2 3 4 3 4 5 6 5 6 7 8 7 8...]
 
 ## Why did I develop tomato ?
 
