@@ -186,7 +186,9 @@ with open(filein,'rb') as rd:
 	wr.write(data)
 	wr.close()
 
-	print "Your file has been saved <3 remember to bake it !\n"
+	print "Your file has been saved <3\n"
+	print "Prefer VLC to view your unstable video file"
+	print "But don't forget to bake it ! :)"
 
 #############
 ### DEBUG ###
