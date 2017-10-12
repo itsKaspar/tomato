@@ -96,7 +96,6 @@ with open(filein,'rb') as rd:
 	if mode == "void":
 		print "### MODE - VOID"
 		print "##################\n"
-
 		print "not doing shit"
 
 	if mode == "shuffle":
