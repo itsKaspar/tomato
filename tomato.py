@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python
 
 import argparse, os, re, random, struct
 from itertools import chain
