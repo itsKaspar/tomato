@@ -10,6 +10,6 @@ filein = args.input
 
 
 os.system("mencoder " + filein + " -o temp.mov -ovc x264")
-os.system("ffmpeg -i temp.mov -c:v libx264 baked-" + filein + "")
+os.system("ffmpeg -i temp.mov -c:v libx264 -crf 0 -preset ultrafast baked-" + filein + "")
 os.system("del temp.mov")
 
