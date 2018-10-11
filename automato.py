@@ -29,9 +29,6 @@ if vidcodec == "libxvid":
 
 if not os.path.exists("automato-" + filename): 
 	os.makedirs("automato-" + filename)
-	
-if not os.path.exists("automato-" + filename + "/cuts"): 
-	os.makedirs("automato-" + filename + "/cuts")
 
 if not os.path.exists("automato-" + filename + "/enc"): 
 	os.makedirs("automato-" + filename + "/enc")	
@@ -50,35 +47,19 @@ if not os.path.exists("automato-" + filename + "/baked2"):
 ########################################	
 
 i = 0
-t = 4 # length in seconds of each cut	
 tracker = 0 #current seconds in the movie file
 out_dir = "automato-" + filename  + "/enc"
 filez = 0
 
 cliplength = int(clip.duration)
 
-while(tracker < cliplength):
-	if tracker > (cliplength - t): # if the remaining seconds to cut are shorter than the length we want to cut 
-		cutlength = cliplength - tracker - 1
-	else:
-		cutlength = t
+while(tracker < cliplength - 1):
+	os.system("ffmpeg -ss " + str(tracker) +  " -i " + filein + " -fs 500000000 -c:v " + vidcodec + " -an -bf 0 -g 99999 " + out_dir + "/enc_" + filename + "_" + str(i) + ".avi")
 	
-	os.system("ffmpeg -ss " + str(tracker) +  " -i " + filein + " -t " + str(cutlength) + " -c:v " + vidcodec + " -an -bf 0 -g 600 " + out_dir + "/enc_" + filename + "_" + str(i) + ".avi")
-	
-	tracker = tracker + t
+	lastcut = VideoFileClip(out_dir + "/enc_" + filename + "_" + str(i) + ".avi")
+	tracker = tracker + lastcut.duration
 	i += 1
 	filez += 1
-	
-########################################
-##### ENCODE ALL SMALL VIDEOS ##########
-########################################	
-
-# i = 1
-# in_dir = "automato-" + filename + "/cuts"
-# out_dir = "automato-" + filename  + "/enc"
-# for filez in os.listdir("automato-" + filename + "/cuts"):
-# 	os.system("ffmpeg -i " + in_dir + "/" + filez + " -c:v " + vidcodec + " -an -bf 0 -g 600 " + out_dir + "/enc_" + filename + "_" + str(i) + ".avi")
-# 	i += 1
 		
 ########################################
 ##### TOMATO ALL VIDEOS ################
@@ -103,7 +84,7 @@ out_dir = "automato-" + filename  + "/baked1"
 while i < filez :
 	os.system("mencoder " + in_dir + "/glitched_" + filename + "_" + str(i) + ".avi -o " + out_dir + "/baked1_" + filename + "_" + str(i) + ".mov -ovc x264")
 	i += 1
-	time.sleep(1)
+	time.sleep(5)
 	
 i = 0
 in_dir = "automato-" + filename + "/baked1"
@@ -129,7 +110,7 @@ while i < filez :
 	concatfile.close()
 	i += 1
 	
-os.system("ffmpeg -f concat -safe 0 -i automato-" + filename + "/concat_" + filename + ".txt -c copy automato-" + filename + "FINAL_" + filename + ".mp4")
+os.system("ffmpeg -f concat -safe 0 -i automato-" + filename + "/concat_" + filename + ".txt -c copy automato-" + filename + "/FINAL_" + filename + ".mp4")
 
 	
 	
