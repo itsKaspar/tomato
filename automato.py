@@ -109,9 +109,11 @@ while i < filez :
 	concatfile.write("\n")
 	concatfile.close()
 	i += 1
-	
-os.system("ffmpeg -f concat -safe 0 -i automato-" + filename + "/concat_" + filename + ".txt -c copy automato-" + filename + "/FINAL_" + filename + ".mp4")
 
+if filez > 1:
+	os.system("ffmpeg -f concat -safe 0 -i automato-" + filename + "/concat_" + filename + ".txt -c copy automato-" + filename + "/FINAL_" + filename + ".mp4")
+else:
+	os.system("ffmpeg -i " + in_dir + "/baked2_" + filename + "_" + str(i) + ".mov -c copy automato-" + filename + "/FINAL_" + filename + ".mp4")
 	
 	
 	
