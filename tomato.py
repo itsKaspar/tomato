@@ -9,7 +9,7 @@ print "| |_ ___  _ __ ___   __ _| |_ ___  "
 print "| __/ _ \| '_ ` _ \ / _` | __/ _ \ "
 print "| || (_) | | | | | | (_| | || (_) |"
 print " \__\___/|_| |_| |_|\__,_|\__\___/ "
-print "tomato.py v1.3.1 last update 13.12.2018"
+print "tomato.py v1.3 last update 12.10.2017"
 print "\\\\ Audio Video Interleave index breaker"
 print " "
 print "\"je demande a ce qu'on tienne pour un cretin"
@@ -27,7 +27,8 @@ print " "
 parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("-i", "--input", help="input file")
 parser.add_argument('-m', "--mode", action='store', dest='modevalue',help='choose mode, one of:\nshuffle irep ikill bloom pulse reverse invert')
-parser.add_argument('-ign', action='store', dest='ignoredframes',help='var3', default=0)
+parser.add_argument('-ss', action='store', dest='ignoredframes',help='var3', default=1)
+parser.add_argument('-t', action='store', dest='glitchedframes',help='var4', default=0)
 parser.add_argument('-c', action='store', dest='countframes',help='var1', default=1)
 parser.add_argument('-n', action='store', dest='positframes',help='var2', default=1)
 parser.add_argument('-l','--lim', help='fraction of file to search before giving up, default: 4', default=4)
@@ -39,6 +40,7 @@ fileout = args.file
 filein = args.input
 mode = args.modevalue
 ignoredframes = args.ignoredframes
+glitchedframes = args.glitchedframes
 countframes = args.countframes
 positframes = args.positframes
 
@@ -93,10 +95,18 @@ with open(filein,'rb') as rd:
 	regex = re.compile(b'.*wb.*')
 
 
-	##option for ignoring n first frames?
+	## option for ignoring n first frames (with -ss)
 	ignored_bytes = (int(ignoredframes) - 1) * n 
 	ignored_idx = idx[:ignored_bytes]
 	idx = idx[ignored_bytes:]
+
+	## option for only glitching t frames (with -t)
+	if glitchedframes != 0 :
+		end_bytes = int(glitchedframes) * n
+		end_idx = idx[end_bytes:]
+		idx = idx[:end_bytes]
+	else :
+		end_idx = ""
 
 	## unignored part of the index to act upon
 	idx = [idx[i:i+n] for i in range(0, len(idx), n) if not re.match(regex,idx[i:i+n])]
@@ -202,8 +212,11 @@ with open(filein,'rb') as rd:
 ### FIX INDEX LENGTH ###
 ########################
 
-	print "old index size : " + str(number_of_frames + 1) + " frames"
-	index_length = len(idx)*16 + 16
+	print "old index size : " + str(number_of_frames + 1 + int(ignoredframes) + (len(end_idx)/16)) + " frames"
+
+	index_length = len(idx)*16 + 16 + ignored_bytes
+	if end_idx : index_length = index_length + len(end_idx)
+
 	print "new index size : " + str((index_length/16)) + " frames\n"
 
 	## convert it to packed data
@@ -215,7 +228,7 @@ with open(filein,'rb') as rd:
 
 	print "Saving new file\n"
 	## rejoin the whole thing
-	data = b''.join(b'idx1' + index_length + first_frame + ignored_idx + b''.join(idx))
+	data = b''.join(b'idx1' + index_length + first_frame + ignored_idx + b''.join(idx) + end_idx)
 	wr = open(fileout, 'ab')
 	wr.write(data)
 	wr.close()
