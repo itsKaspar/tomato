@@ -9,7 +9,7 @@ print "| |_ ___  _ __ ___   __ _| |_ ___  "
 print "| __/ _ \| '_ ` _ \ / _` | __/ _ \ "
 print "| || (_) | | | | | | (_| | || (_) |"
 print " \__\___/|_| |_| |_|\__,_|\__\___/ "
-print "tomato.py v1.3 last update 12.10.2017"
+print "tomato.py v1.3.1 last update 13.12.2018"
 print "\\\\ Audio Video Interleave index breaker"
 print " "
 print "\"je demande a ce qu'on tienne pour un cretin"
@@ -27,6 +27,7 @@ print " "
 parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("-i", "--input", help="input file")
 parser.add_argument('-m', "--mode", action='store', dest='modevalue',help='choose mode, one of:\nshuffle irep ikill bloom pulse reverse invert')
+parser.add_argument('-ign', action='store', dest='ignoredframes',help='var3', default=0)
 parser.add_argument('-c', action='store', dest='countframes',help='var1', default=1)
 parser.add_argument('-n', action='store', dest='positframes',help='var2', default=1)
 parser.add_argument('-l','--lim', help='fraction of file to search before giving up, default: 4', default=4)
@@ -37,6 +38,7 @@ args = parser.parse_args()
 fileout = args.file
 filein = args.input
 mode = args.modevalue
+ignoredframes = args.ignoredframes
 countframes = args.countframes
 positframes = args.positframes
 
@@ -89,6 +91,14 @@ with open(filein,'rb') as rd:
 	#print([i for i in check])
 	## put all frames in array ignoring sound frames
 	regex = re.compile(b'.*wb.*')
+
+
+	##option for ignoring n first frames?
+	ignored_bytes = (int(ignoredframes) - 1) * n 
+	ignored_idx = idx[:ignored_bytes]
+	idx = idx[ignored_bytes:]
+
+	## unignored part of the index to act upon
 	idx = [idx[i:i+n] for i in range(0, len(idx), n) if not re.match(regex,idx[i:i+n])]
 
 	## calculate number of frames
@@ -205,7 +215,7 @@ with open(filein,'rb') as rd:
 
 	print "Saving new file\n"
 	## rejoin the whole thing
-	data = b''.join(b'idx1' + index_length + first_frame + b''.join(idx))
+	data = b''.join(b'idx1' + index_length + first_frame + ignored_idx + b''.join(idx))
 	wr = open(fileout, 'ab')
 	wr.write(data)
 	wr.close()
@@ -222,3 +232,4 @@ with open(filein,'rb') as rd:
 
 #	f3 = open('index.avi', 'wb')
 #	f3.write(''.join(idx))
+
