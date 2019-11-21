@@ -1,3 +1,5 @@
 This file lists ffmpeg commands to prepare your files in the hopes that they bake correctly
 
 ffmpeg -i input.avi -c libxvid -an -bf 0 -qscale:v 1 -g 999 output.avi
+
+lulz test
