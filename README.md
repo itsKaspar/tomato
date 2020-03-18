@@ -61,3 +61,5 @@ Libraries used : numpy, argparse, os, re, random, struct, itertools
 I recommend preparing your AVI files with ffmpeg and the codec library of your choice. To read your glitched files I recommend VLC or Xine if you're under Linux. Both are great for visualizing content (especially xine for the random mode) but keep in mind you should always be experimenting and using different visualizers or tools to bake your files.
 
 If you have any questions or ideas feel free to send me an email at kaspar.ravel@gmail.com
+
+For more info on development : https://www.kaspar.wtf/blog/tomato-v2-0-avi-breaker
