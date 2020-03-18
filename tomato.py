@@ -1,7 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
+import numpy as np
 import argparse, os, re, random, struct
 from itertools import chain
+from itertools import repeat
 
 print " _                        _        "
 print "| |                      | |       "
@@ -9,240 +11,241 @@ print "| |_ ___  _ __ ___   __ _| |_ ___  "
 print "| __/ _ \| '_ ` _ \ / _` | __/ _ \ "
 print "| || (_) | | | | | | (_| | || (_) |"
 print " \__\___/|_| |_| |_|\__,_|\__\___/ "
-print "tomato.py v1.3 last update 12.10.2017"
-print "\\\\ Audio Video Interleave index breaker"
+print "tomato.py v2.0 last update 18.03.2020"
+print "\\\\ Audio Video Interleave breaker"
 print " "
-print "\"je demande a ce qu'on tienne pour un cretin"
-print "celui qui se refuserait encore, par exemple,"
-print "a voir un cheval galoper sur une tomate.\""
-print " - Andre Breton"
+print "glitch tool made with love for the glitch art community <3"
+print "if you have any questions, would like to contact me"
+print "or even hire me for performance / research / education"
+print "you can shoot me an email at kaspar.ravel@gmail.com"
+print "___________________________________"
 print " "
+print "wb. https://www.kaspar.wtf "
+print "fb. https://www.facebook.com/kaspar.wtf "
+print "ig. https://www.instagram.com/kaspar.wtf "
 print "___________________________________"
 print " "
 
-#################
-### ARGUMENTS ###
-#################
-
+#parse arguments
 parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("-i", "--input", help="input file")
-parser.add_argument('-m', "--mode", action='store', dest='modevalue',help='choose mode, one of:\nshuffle irep ikill bloom pulse reverse invert')
-parser.add_argument('-ss', action='store', dest='ignoredframes',help='var3', default=1)
-parser.add_argument('-t', action='store', dest='glitchedframes',help='var4', default=0)
-parser.add_argument('-c', action='store', dest='countframes',help='var1', default=1)
-parser.add_argument('-n', action='store', dest='positframes',help='var2', default=1)
-parser.add_argument('-l','--lim', help='fraction of file to search before giving up, default: 4', default=4)
-parser.add_argument("file", help="input file")
+parser.add_argument('-m', "--mode", action='store', dest='modevalue',help='choose mode', default='void')
+parser.add_argument('-c', action='store', dest='countframes', default=1)
+parser.add_argument('-n', action='store', dest='positframes', default=1)
+parser.add_argument('-a', action='store', dest='audio', default=0)
+parser.add_argument('-ff', action='store', dest='firstframe', default=1)
+parser.add_argument('-k', action='store', dest='kill', default=0.7, type=float)
 
 args = parser.parse_args()
 
-fileout = args.file
 filein = args.input
 mode = args.modevalue
-ignoredframes = args.ignoredframes
-glitchedframes = args.glitchedframes
 countframes = args.countframes
 positframes = args.positframes
+audio = args.audio
+firstframe = args.firstframe
+kill = args.kill
 
-#######################
-### HELPER FUNCTION ###
-#######################
+#define temp directory and files
+temp_nb = random.randint(10000, 99999)
+temp_dir = "temp-" + str(temp_nb)
+temp_hdrl = temp_dir +"/hdrl.bin"
+temp_movi = temp_dir +"/movi.bin"
+temp_idx1 = temp_dir +"/idx1.bin"
 
-def constrain(val, min_val, max_val):
-    return min(max_val, max(min_val, val))
+os.mkdir(temp_dir)
 
-####################
-### OPENING FILE ###
-####################
+print(kill*10)
 
-with open(filein,'rb') as rd:
-	print "Opening File\n"
-	filesize = os.path.getsize(filein)
+######################################
+### STREAM FILE INTO WORK DIR BINS ###
+######################################
+
+print("> step 1/5 : streaming into binary files")
+
+def bstream_until_marker(bfilein, bfileout, marker=0, startpos=0):
 	chunk = 1024
-	lim = args.lim
-	idx = ''
-	with open(fileout,'wb') as wr:
-		print "Streaming File\n"
-		for pos in xrange(filesize-chunk, filesize-filesize/lim, -chunk): # move backwards through data
-			rd.seek(pos)
-			buffer = rd.read(chunk)
+	filesize = os.path.getsize(bfilein)
+	if marker :
+		marker = str.encode(marker)
 
-			if buffer.find(b'idx1') >= 0:
-				split = buffer.split(b'idx1', 1)
-				rd.seek(0)
-				wr.write(rd.read(pos)) # start the read at the beginning again,
-				wr.write(split[0])  # spit out data up to this point plus the stuff before idx
-                                rd.seek(len(split[0])+4,1)
-				idx = rd.read()
-				break
+	with open(bfilein,'rb') as rd:
+		with open(bfileout,'ab') as wr:
+			for pos in range(startpos, filesize, chunk):
+				rd.seek(pos)
+				buffer = rd.read(chunk)
 
-		if len(idx) == 0:
-			print('Could not locate index!\n')
-			raise SystemExit # quit
+				if marker:
+					if buffer.find(marker) > 0 :
+						marker_pos = re.search(marker, buffer).start() # position is relative to buffer glitchedframes
+						marker_pos = marker_pos + pos # position should be absolute now
+						split = buffer.split(marker, 1)
+						wr.write(split[0])
+						return marker_pos
+					else:
+						wr.write(buffer)
+				else:
+					wr.write(buffer)
 
+#make 3 files, 1 for each chunk
+movi_marker_pos = bstream_until_marker(filein, temp_hdrl, "movi")
+idx1_marker_pos = bstream_until_marker(filein, temp_movi, "idx1", movi_marker_pos)
+bstream_until_marker(filein, temp_idx1, 0, idx1_marker_pos)
 
-	print "Getting list of Tomatoes\n"
-	## get the length of the index and store it
-	idx, index_length = idx[4:], idx[:4]
+####################################
+### FUN STUFF WITH VIDEO CONTENT ###
+####################################
 
-	## get the first iframe and store it
-	n = 16
-	first_frame, idx = idx[:n], idx[n:]
-	check = bytearray()
- 	check.extend(first_frame)
-	#print([i for i in check])
-	## put all frames in array ignoring sound frames
-	regex = re.compile(b'.*wb.*')
+print("> step 2/5 : constructing frame index")
 
+with open(temp_movi,'rb') as rd:
+	chunk = 1024
+	filesize = os.path.getsize(temp_movi)
+	frame_table = []
 
-	## option for ignoring n first frames (with -ss)
-	ignored_bytes = (int(ignoredframes) - 1) * n 
-	ignored_idx = idx[:ignored_bytes]
-	idx = idx[ignored_bytes:]
+	for pos in range(0, filesize, chunk):
+		rd.seek(pos)
+		buffer = rd.read(chunk)
 
-	## option for only glitching t frames (with -t)
-	if glitchedframes != 0 :
-		end_bytes = int(glitchedframes) * n
-		end_idx = idx[end_bytes:]
-		idx = idx[:end_bytes]
-	else :
-		end_idx = ""
+        #build first list with all adresses 
+		for m in (re.finditer(b'\x30\x31\x77\x62', buffer)): # find iframes
+				if audio : frame_table.append([m.start() + pos, 'sound'])		
+		for m in (re.finditer(b'\x30\x30\x64\x63', buffer)): # find b frames
+			frame_table.append([m.start() + pos, 'video'])
 
-	## unignored part of the index to act upon
-	idx = [idx[i:i+n] for i in range(0, len(idx), n) if not re.match(regex,idx[i:i+n])]
+		#then remember to sort the list
+		frame_table.sort(key=lambda tup: tup[0])
 
-	## calculate number of frames
-	number_of_frames = len(idx)
+	l = []
+	l.append([0,0, 'void'])
+	max_frame_size = 0
 
-	print "Ready for the serious shitz\n"
+    #build tuples for each frame index with frame sizes
+	for n in range(len(frame_table)):
+		if n + 1 < len(frame_table):
+			frame_size = frame_table[n + 1][0] - frame_table[n][0]
+		else:
+			frame_size = filesize - frame_table[n][0]
+		max_frame_size = max(max_frame_size, frame_size)
+		l.append([frame_table[n][0],frame_size, frame_table[n][1]])
 
-#########################
-### OPERATIONS TO IDX ###
-#########################
-
-	if mode == "void":
-		print "### MODE - VOID"
-		print "##################\n"
-		print "not doing shit"
-
-	if mode == "shuffle":
-		print "### MODE - RANDOM"
-		print "##################\n"
-		idx = random.sample(idx,number_of_frames)
-
-        if mode == "jiggle":
-                print "### MODE - JIGGLE"
-		print "##################\n"
-
-                l = len(idx)-1
-                amount = int(positframes)
-                idx = [idx[constrain(x+int(random.gauss(0,amount)),0,l)] for x in range(0,len(idx))]
-                
-	if mode == "ikill":
-		print "### MODE - IKILL"
-		print "##################\n"
-		regex = re.compile(b'.*dc\x10.*')
-		idx = [x for x in idx if not re.match(regex,x)]
-
-	if mode == "irep":
-		print "### MODE - IREP"
-		print "##################\n"
-
-		nidx = []
-		last = None
-		regex = re.compile(b'.*dc\x10.*')
-		for x in idx:
-			if not last: last = x
-			if not re.match(regex,x):
-				nidx.append(x)
-				last = x
-			else:
-				nidx.append(last)
-		idx = nidx
-
-	if mode == "bloom":
-		print "### MODE - BLOOM"
-		print "##################\n"
-		## bloom options
-		repeat = int(countframes)
-		frame = int(positframes)
-
-		## split list
-		lista = idx[:frame]
-		listb = idx[frame:]
-
-		## rejoin list with bloom
-		idx = lista + ([idx[frame]]*repeat) + listb
-
-	if mode == "pulse":
-		print "### MODE - PULSE"
-		print "##################\n"
-
-		pulselen = int(countframes)
-		pulseryt = int(positframes)
-
-		idx = [[x for j in range(pulselen)] if not i%pulseryt else x for i,x in enumerate(idx)]
-		idx = [item for sublist in idx for item in sublist] #flattens the list
-		idx = ''.join(idx)
-		idx = [idx[i:i+n] for i in range(0, len(idx), n)]
-
-        if mode == "overlapped":
-                print "### MODE - OVERLAPPED"
-                print "##################\n"
-
-		pulselen = int(countframes)
-		pulseryt = int(positframes)
-
-                idx = [idx[i:i+pulselen] for i in range(0,len(idx),pulseryt)]
-                idx = [item for sublist in idx for item in sublist]
-                
-	if mode == "reverse":
-		print "### MODE - REVERSE"
-		print "##################\n"
-
-		idx = idx[::-1]
-
-	if mode == "invert":
-		print "### MODE - INVERT"
-		print "##################\n"
-
-		idx = sum(zip(idx[1::2], idx[::2]), ())
 
 ########################
-### FIX INDEX LENGTH ###
+### TIME FOR SOME FX ###
 ########################
 
-	print "old index size : " + str(number_of_frames + 1 + int(ignoredframes) + (len(end_idx)/16)) + " frames"
+# variables that make shit work
+clean = []
+final = []
 
-	index_length = len(idx)*16 + 16 + ignored_bytes
-	if end_idx : index_length = index_length + len(end_idx)
+# keep first video frame or not
+if firstframe :
+	for x in l :
+		if x[2] == 'video':
+	 		clean.append(x)
+	 		break
 
-	print "new index size : " + str((index_length/16)) + " frames\n"
+# clean the list by killing "big" frames
+for x in l:
+	if x[1] <= (max_frame_size * kill) :
+		clean.append(x)
 
-	## convert it to packed data
-	index_length = struct.pack('<I',index_length)
+# FX modes
 
-###################
-### SAVING FILE ###
-###################
+if mode == "void":
+	print('> step 3/5 : mode void')
+	final = clean
 
-	print "Saving new file\n"
-	## rejoin the whole thing
-	data = b''.join(b'idx1' + index_length + first_frame + ignored_idx + b''.join(idx) + end_idx)
-	wr = open(fileout, 'ab')
-	wr.write(data)
-	wr.close()
+if mode == "random":
+	print('> step 3/5 : mode random')
+	final = random.sample(clean,len(clean))
 
-	print "Your file has been saved <3\n"
-	print "Prefer VLC to view your unstable video file"
-	print "But don't forget to bake it ! :)"
+if mode == "reverse":
+	print('> step 3/5 : mode reverse')
+	final = clean[::-1]
 
-#############
-### DEBUG ###
-#############
+if mode == "invert":
+	print('> step 3/5 : mode invert')
+	final = sum(zip(clean[1::2], clean[::2]), ())
 
-## creates a seperate file with the index
+if mode == 'bloom':
+	print('> step 3/5 : mode bloom')
+	repeat = int(countframes)
+	frame = int(positframes)
+	## split list
+	lista = clean[:frame]
+	listb = clean[frame:]
+	## rejoin list with bloom
+	final = lista + ([clean[frame]]*repeat) + listb
 
-#	f3 = open('index.avi', 'wb')
-#	f3.write(''.join(idx))
+if mode == 'pulse':
+	print('> step 3/5 : mode pulse')
+	pulselen = int(countframes)
+	pulseryt = int(positframes)
+	j = 0
+	for x in clean:
+		i = 0
+		if(j % pulselen == 0):
+			while i < pulselen :
+				final.append(x)
+				i = i + 1
+		else:
+			final.append(x)
+			j = j + 1
 
+if mode == "jiggle":
+	print('> step 3/5 : mode jiggle')
+	print('*needs debugging lol help thx*')
+	amount = int(positframes)
+	final = [clean[constrain(x+int(random.gauss(0,amount)),0,len(clean)-1)] for x in range(0,len(clean))]
+
+if mode == "overlap":
+	print('> step 3/5 : mode overlap')
+	pulselen = int(countframes)
+	pulseryt = int(positframes)
+
+	clean = [clean[i:i+pulselen] for i in range(0,len(clean),pulseryt)]
+	final = [item for sublist in clean for item in sublist]
+
+if mode == 'exponential':
+	print('> step 3/5 : mode exponential')
+
+if mode == 'swap':
+	print('> step 3/5 : mode swap')
+
+
+####################################
+### PUT VIDEO FILE BACK TOGETHER ###
+####################################
+
+print("> step 4/5 : putting things back together")
+
+#name new file
+cname = '-c' + str(countframes) if countframes > 1 else '' 
+pname = '-n' + str(positframes) if positframes > 1 else ''
+fileout = filein[:-4] + '-' + mode + cname + pname + '.avi'
+
+#delete old file
+if os.path.exists(fileout):
+	os.remove(fileout)
+
+bstream_until_marker(temp_hdrl, fileout)
+
+with open(temp_movi,'rb') as rd:
+	filesize = os.path.getsize(temp_movi)
+	with open(fileout,'ab') as wr:
+		wr.write(struct.pack('<4s', b'movi'))
+		for x in final:
+			if x[0] != 0 and x[1] != 0:
+				rd.seek(x[0])
+				wr.write(rd.read(x[1]))
+
+bstream_until_marker(temp_idx1, fileout)
+
+#remove unnecessary temporary files and folders
+os.remove(temp_hdrl)
+os.remove(temp_movi)
+os.remove(temp_idx1)
+os.rmdir(temp_dir)
+
+print("> step 5/5 : done - final idx size : " + str(len(final)))
