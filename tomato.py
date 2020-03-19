@@ -5,26 +5,26 @@ import argparse, os, re, random, struct
 from itertools import chain
 from itertools import repeat
 
-print " _                        _        "
-print "| |                      | |       "
-print "| |_ ___  _ __ ___   __ _| |_ ___  "
-print "| __/ _ \| '_ ` _ \ / _` | __/ _ \ "
-print "| || (_) | | | | | | (_| | || (_) |"
-print " \__\___/|_| |_| |_|\__,_|\__\___/ "
-print "tomato.py v2.0 last update 18.03.2020"
-print "\\\\ Audio Video Interleave breaker"
-print " "
-print "glitch tool made with love for the glitch art community <3"
-print "if you have any questions, would like to contact me"
-print "or even hire me for performance / research / education"
-print "you can shoot me an email at kaspar.ravel@gmail.com"
-print "___________________________________"
-print " "
-print "wb. https://www.kaspar.wtf "
-print "fb. https://www.facebook.com/kaspar.wtf "
-print "ig. https://www.instagram.com/kaspar.wtf "
-print "___________________________________"
-print " "
+print (" _                        _        ")
+print ("| |                      | |       ")
+print ("| |_ ___  _ __ ___   __ _| |_ ___  ")
+print ("| __/ _ \| '_ ` _ \ / _` | __/ _ \ ")
+print ("| || (_) | | | | | | (_| | || (_) |")
+print (" \__\___/|_| |_| |_|\__,_|\__\___/ ")
+print ("tomato.py v2.0 last update 18.03.2020")
+print ("\\\\ Audio Video Interleave breaker")
+print (" ")
+print ("glitch tool made with love for the glitch art community <3")
+print ("if you have any questions, would like to contact me")
+print ("or even hire me for performance / research / education")
+print ("you can shoot me an email at kaspar.ravel@gmail.com")
+print ("___________________________________")
+print (" ")
+print ("wb. https://www.kaspar.wtf ")
+print ("fb. https://www.facebook.com/kaspar.wtf ")
+print ("ig. https://www.instagram.com/kaspar.wtf ")
+print ("___________________________________")
+print (" ")
 
 #parse arguments
 parser = argparse.ArgumentParser(add_help=True)
@@ -54,8 +54,6 @@ temp_movi = temp_dir +"/movi.bin"
 temp_idx1 = temp_dir +"/idx1.bin"
 
 os.mkdir(temp_dir)
-
-print(kill*10)
 
 ######################################
 ### STREAM FILE INTO WORK DIR BINS ###
