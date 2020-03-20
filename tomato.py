@@ -55,6 +55,10 @@ temp_idx1 = temp_dir +"/idx1.bin"
 
 os.mkdir(temp_dir)
 
+#Define constrain function for jiggle :3
+def constrain(val, min_val, max_val):
+    return min(max_val, max(min_val, val))
+
 ######################################
 ### STREAM FILE INTO WORK DIR BINS ###
 ######################################
