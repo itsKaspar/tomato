@@ -219,8 +219,8 @@ if mode == 'swap':
 print("> step 4/5 : putting things back together")
 
 #name new file
-cname = '-c' + str(countframes) if countframes > 1 else '' 
-pname = '-n' + str(positframes) if positframes > 1 else ''
+cname = '-c' + str(countframes) if int(countframes) > 1 else '' 
+pname = '-n' + str(positframes) if int(positframes) > 1 else ''
 fileout = filein[:-4] + '-' + mode + cname + pname + '.avi'
 
 #delete old file
