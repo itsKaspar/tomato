@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import numpy as np
 import argparse, os, re, random, struct
 from itertools import chain
 from itertools import repeat
@@ -11,7 +10,7 @@ print ("| |_ ___  _ __ ___   __ _| |_ ___  ")
 print ("| __/ _ \| '_ ` _ \ / _` | __/ _ \ ")
 print ("| || (_) | | | | | | (_| | || (_) |")
 print (" \__\___/|_| |_| |_|\__,_|\__\___/ ")
-print ("tomato.py v2.0 last update 18.03.2020")
+print ("tomato.py v2.0 last update 21.03.2020")
 print ("\\\\ Audio Video Interleave breaker")
 print (" ")
 print ("glitch tool made with love for the glitch art community <3")
@@ -29,12 +28,12 @@ print (" ")
 #parse arguments
 parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("-i", "--input", help="input file")
-parser.add_argument('-m', "--mode", action='store', dest='modevalue',help='choose mode', default='void')
-parser.add_argument('-c', action='store', dest='countframes', default=1)
-parser.add_argument('-n', action='store', dest='positframes', default=1)
-parser.add_argument('-a', action='store', dest='audio', default=0)
-parser.add_argument('-ff', action='store', dest='firstframe', default=1)
-parser.add_argument('-k', action='store', dest='kill', default=0.7, type=float)
+parser.add_argument('-m', "--mode", action='store', dest='modevalue',help='choose mode - void, random, reverse, invert, bloom, pulse, jiggle, overlap', default='void')
+parser.add_argument('-c', action='store', dest='countframes', default=1,help="how often to glitch (for modes that support it)")
+parser.add_argument('-n', action='store', dest='positframes', default=1,help="how many frames in the glitch (for modes that support it)")
+parser.add_argument('-a', action='store', dest='audio', default=0,help="attempt to preserve audio")
+parser.add_argument('-ff', action='store', dest='firstframe', default=1,help="whether to keep first video frame")
+parser.add_argument('-k', action='store', dest='kill', default=0.7, type=float,help="max framesize to kill while cleaning")
 
 args = parser.parse_args()
 
@@ -45,6 +44,12 @@ positframes = args.positframes
 audio = args.audio
 firstframe = args.firstframe
 kill = args.kill
+
+if filein is None or os.path.exists(filein) == False:
+	print("> step 0/5: valid input file required!")
+	print("use -h to see help")
+	exit()
+	
 
 #define temp directory and files
 temp_nb = random.randint(10000, 99999)
@@ -197,7 +202,7 @@ if mode == 'pulse':
 
 if mode == "jiggle":
 	print('> step 3/5 : mode jiggle')
-	print('*needs debugging lol help thx*')
+	#print('*needs debugging lol help thx*') # didn't pandy's branch fix this?
 	amount = int(positframes)
 	final = [clean[constrain(x+int(random.gauss(0,amount)),0,len(clean)-1)] for x in range(0,len(clean))]
 
@@ -211,9 +216,11 @@ if mode == "overlap":
 
 if mode == 'exponential':
 	print('> step 3/5 : mode exponential')
+	print('sorry, currently not implemented. using void..')	
 
 if mode == 'swap':
 	print('> step 3/5 : mode swap')
+	print('sorry, currently not implemented. using void..')		
 
 
 ####################################
