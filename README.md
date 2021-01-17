@@ -14,7 +14,7 @@ Modes called through -mode [mode]
 - `invert` - switches each consecutive frame witch each other
 - `bloom` - duplicates `c` times p-frame number `n`
 - `pulse` - duplicates groups of `c` p-frames every `n` frames
-- `overlapped` - copy group of `c` frames taken from every `n`th position
+- `overlap` - copy group of `c` frames taken from every `n`th position
 - `jiggle` - take frame from around current position. `n` parameter is spread size [broken]
 
 Other parameters :
@@ -42,7 +42,7 @@ Duplicates 5 times a frame every 10 frame
 
 Shuffles all of the frames in the video
 
->python tomato.py -i input.avi -m overlapped -c 4 -n 2
+>python tomato.py -i input.avi -m overlap -c 4 -n 2
 
 Copy 4 frames taken starting from every 2nd frame. [1 2 3 4 3 4 5 6 5 6 7 8 7 8...]
 
