@@ -26,25 +26,21 @@ Other parameters :
 
 ## Examples of usage
 
+Takes out iframes:
 >python tomato.py -i input.avi
 
-Takes out iframes
-
+Duplicate 50 times the 100th frame:
 >python tomato.py -i input.avi -m bloom -c 50 -n 100 
 
-Duplicate 50 times the 100th frame
-
+Duplicates 5 times a frame every 10 frame:
 >python tomato.py -i input.avi -m pulse -c 5 -n 10
 
-Duplicates 5 times a frame every 10 frame
-
+Shuffles all of the frames in the video:
 >python tomato.py -i input.avi -m random
 
-Shuffles all of the frames in the video
-
+Copy 4 frames taken starting from every 2nd frame. [1 2 3 4 3 4 5 6 5 6 7 8 7 8...]:
 >python tomato.py -i input.avi -m overlap -c 4 -n 2
 
-Copy 4 frames taken starting from every 2nd frame. [1 2 3 4 3 4 5 6 5 6 7 8 7 8...]
 
 ## Why tomato ?
 
